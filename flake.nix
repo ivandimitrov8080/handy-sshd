@@ -21,11 +21,14 @@
           inherit nativeBuildInputs buildInputs;
         };
 
-        packages.default = pkgs.buildGoModule {
+        packages.default = pkgs.buildGoModule rec {
           inherit buildInputs;
           name = "handy-sshd";
           src = ./.;
           vendorHash = null;
+          postInstall = ''
+            mv $out/bin/main $out/bin/${name}
+          '';
         };
       }
     );
