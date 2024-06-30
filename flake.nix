@@ -21,7 +21,7 @@
         nativeBuildInputs = with pkgs; [ go ];
         buildInputs = with pkgs; [ ];
       in
-      {
+      rec {
         devShells.default = pkgs.mkShell {
           inherit nativeBuildInputs;
           buildInputs = buildInputs ++ (with pkgs; [
@@ -42,6 +42,10 @@
           postInstall = ''
             mv $out/bin/main $out/bin/${name}
           '';
+        };
+
+        overlays.default = final: prev: {
+          handy-sshd = packages.${system}.default;
         };
       }
     );
