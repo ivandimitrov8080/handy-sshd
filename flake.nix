@@ -12,13 +12,26 @@
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = import nixpkgs { inherit system; };
+        pkgs = import nixpkgs {
+          inherit system;
+          config = {
+            allowUnfree = true;
+          };
+        };
         nativeBuildInputs = with pkgs; [ go ];
         buildInputs = with pkgs; [ ];
       in
       {
         devShells.default = pkgs.mkShell {
-          inherit nativeBuildInputs buildInputs;
+          inherit nativeBuildInputs;
+          buildInputs = buildInputs ++ (with pkgs; [
+            gopls
+            (vscode-with-extensions.override {
+              vscodeExtensions = with vscode-extensions; [
+                golang.go
+              ];
+            })
+          ]);
         };
 
         packages.default = pkgs.buildGoModule rec {
